@@ -1,0 +1,3 @@
+idotmatrix
+requests
+Pillow

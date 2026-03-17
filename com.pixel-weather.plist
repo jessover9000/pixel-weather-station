@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.pixel-weather</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <!-- UPDATE these paths to match your setup -->
+        <string>/Users/jessmatz/Grafana/Cursor projects/pixel-weather-station/.venv/bin/python3</string>
+        <string>/Users/jessmatz/Grafana/Cursor projects/pixel-weather-station/weather_station.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/jessmatz/Grafana/Cursor projects/pixel-weather-station</string>
+
+    <key>StartInterval</key>
+    <integer>900</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/pixel-weather-stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/pixel-weather-stderr.log</string>
+</dict>
+</plist>
