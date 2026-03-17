@@ -12,6 +12,8 @@ class WeatherData:
     max_temp: float
     max_rain_probability: int
     weather_code: int
+    sunrise: datetime
+    sunset: datetime
 
 
 def _weather_code_to_condition(code: int) -> str:
@@ -39,7 +41,7 @@ def fetch_weather() -> WeatherData:
         "longitude": config.LONGITUDE,
         "current": "temperature_2m,weather_code",
         "hourly": "precipitation_probability",
-        "daily": "temperature_2m_max",
+        "daily": "temperature_2m_max,sunrise,sunset",
         "timezone": config.TIMEZONE,
         "forecast_days": 1,
     }
@@ -61,9 +63,14 @@ def fetch_weather() -> WeatherData:
         if hour < config.RAIN_CUTOFF_HOUR and prob is not None:
             max_rain = max(max_rain, prob)
 
+    sunrise = datetime.fromisoformat(data["daily"]["sunrise"][0])
+    sunset = datetime.fromisoformat(data["daily"]["sunset"][0])
+
     return WeatherData(
         current_temp=current_temp,
         max_temp=max_temp,
         max_rain_probability=max_rain,
         weather_code=weather_code,
+        sunrise=sunrise,
+        sunset=sunset,
     )

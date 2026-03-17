@@ -22,3 +22,8 @@ FRAME_DELAY = 3.0
 
 # Seconds between weather data refreshes
 WEATHER_REFRESH_INTERVAL = 900  # 15 minutes
+
+# Display brightness (0–100). Day is the default, night kicks in
+# between sunset and sunrise for a soft glow that won't disturb sleep.
+BRIGHTNESS_DAY = 65
+BRIGHTNESS_NIGHT = 25

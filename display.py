@@ -29,6 +29,14 @@ SET_DRAW_MODE = bytearray([5, 0, 4, 1, 1])
 MAX_RETRIES = 2
 
 
+async def set_brightness(client: BleakClient, percent: int) -> None:
+    """Set display brightness (0–100)."""
+    val = max(0, min(100, percent))
+    cmd = bytearray([0x05, 0x00, 0x04, 0x80, val])
+    await client.write_gatt_char(WRITE_CHAR_UUID, cmd, response=True)
+    log.info("brightness set to %d%%", val)
+
+
 def _image_to_rgb(img: Image.Image) -> bytes:
     """Convert a Pillow image to flat RGB bytes (row-major, 3 bytes/pixel)."""
     img = img.convert("RGB").resize(

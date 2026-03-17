@@ -6,11 +6,12 @@ import logging
 import signal
 import sys
 import time
+from datetime import datetime
 
 import config
-from weather import fetch_weather
+from weather import fetch_weather, WeatherData
 from renderer import render_weather
-from display import send_frames, _find_device
+from display import send_frames, _find_device, set_brightness
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,6 +36,7 @@ async def run() -> int:
     address = config.BLE_ADDRESS or await _find_device()
 
     last_fetch = 0.0
+    current_brightness = -1
 
     while not _shutdown:
         now = time.monotonic()
@@ -67,6 +69,13 @@ async def run() -> int:
                     if time.monotonic() - last_fetch >= config.WEATHER_REFRESH_INTERVAL:
                         log.info("time to refresh weather — reconnecting")
                         break
+
+                    now_dt = datetime.now(data.sunrise.tzinfo)
+                    is_night = now_dt < data.sunrise or now_dt > data.sunset
+                    target = config.BRIGHTNESS_NIGHT if is_night else config.BRIGHTNESS_DAY
+                    if target != current_brightness:
+                        await set_brightness(client, target)
+                        current_brightness = target
 
                     for frame in frames:
                         if _shutdown:
