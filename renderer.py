@@ -33,6 +33,11 @@ def _gradient(draw: ImageDraw.ImageDraw, top: Color, bot: Color, y0: int, y1: in
         draw.line([(0, y), (63, y)], fill=c)
 
 
+def _px2(draw: ImageDraw.ImageDraw, x: int, y: int, color: Color):
+    """Draw a 2x2 pixel block (for double-size pixel art characters)."""
+    draw.rectangle([x, y, x + 1, y + 1], fill=color)
+
+
 def _blend(base: Color, overlay: Color, alpha: float) -> Color:
     return (
         int(base[0] * (1 - alpha) + overlay[0] * alpha),
@@ -228,6 +233,90 @@ def _scene_sunny(num_frames: int = 4) -> List[Image.Image]:
             draw.point((bx - 1, by - 1), fill=(255, 200, 100))
             draw.point((bx + 1, by - 1), fill=(255, 200, 100))
 
+        # Totoro standing under the tree — detailed pixel art (~10x16)
+        tx, ty = 4, 30
+        t_body = (130, 140, 145)
+        t_light = (155, 165, 170)
+        t_dark = (90, 100, 105)
+        t_belly = (215, 220, 205)
+        t_chev = (80, 90, 95)
+        t_eye_w = (235, 240, 245)
+        t_pupil = (25, 25, 30)
+        t_nose = (75, 80, 85)
+        t_claw = (60, 55, 50)
+        t_hi = (170, 180, 185)
+        # pointed ears with inner highlight
+        draw.point((tx + 1, ty), fill=t_body)
+        draw.point((tx + 8, ty), fill=t_body)
+        draw.point((tx + 1, ty + 1), fill=t_body)
+        draw.point((tx + 2, ty + 1), fill=t_light)
+        draw.point((tx + 7, ty + 1), fill=t_light)
+        draw.point((tx + 8, ty + 1), fill=t_body)
+        # rounded head
+        for dx in range(2, 8):
+            draw.point((tx + dx, ty + 2), fill=t_body)
+        for dx in range(1, 9):
+            draw.point((tx + dx, ty + 3), fill=t_body)
+        for dx in range(0, 10):
+            draw.point((tx + dx, ty + 4), fill=t_body)
+        # eyes with pupils and highlights
+        draw.point((tx + 2, ty + 4), fill=t_eye_w)
+        draw.point((tx + 3, ty + 4), fill=t_pupil)
+        draw.point((tx + 6, ty + 4), fill=t_pupil)
+        draw.point((tx + 7, ty + 4), fill=t_eye_w)
+        draw.point((tx + 2, ty + 3), fill=(255, 255, 255))
+        draw.point((tx + 7, ty + 3), fill=(255, 255, 255))
+        # nose and mouth row
+        for dx in range(0, 10):
+            draw.point((tx + dx, ty + 5), fill=t_body)
+        draw.point((tx + 4, ty + 5), fill=t_nose)
+        draw.point((tx + 5, ty + 5), fill=t_nose)
+        for dx in range(1, 9):
+            draw.point((tx + dx, ty + 6), fill=t_body)
+        draw.point((tx + 3, ty + 6), fill=t_dark)
+        draw.point((tx + 6, ty + 6), fill=t_dark)
+        # body with shaded sides
+        for dy in range(7, 13):
+            for dx in range(0, 10):
+                draw.point((tx + dx, ty + dy), fill=t_body)
+            draw.point((tx, ty + dy), fill=t_dark)
+            draw.point((tx + 9, ty + dy), fill=t_dark)
+        # shoulder highlights
+        draw.point((tx + 1, ty + 7), fill=t_hi)
+        draw.point((tx + 2, ty + 7), fill=t_hi)
+        # belly patch
+        for dy in range(8, 12):
+            for dx in range(2, 8):
+                draw.point((tx + dx, ty + dy), fill=t_belly)
+        # V-shaped chevron rows
+        draw.point((tx + 4, ty + 8), fill=t_chev)
+        draw.point((tx + 5, ty + 8), fill=t_chev)
+        draw.point((tx + 3, ty + 9), fill=t_chev)
+        draw.point((tx + 6, ty + 9), fill=t_chev)
+        draw.point((tx + 4, ty + 10), fill=t_chev)
+        draw.point((tx + 5, ty + 10), fill=t_chev)
+        draw.point((tx + 3, ty + 11), fill=t_chev)
+        draw.point((tx + 6, ty + 11), fill=t_chev)
+        # lower body taper
+        for dx in range(1, 9):
+            draw.point((tx + dx, ty + 13), fill=t_body)
+        # feet with claws
+        for dx in [1, 2, 3]:
+            draw.point((tx + dx, ty + 14), fill=t_body)
+        for dx in [6, 7, 8]:
+            draw.point((tx + dx, ty + 14), fill=t_body)
+        draw.point((tx + 1, ty + 15), fill=t_claw)
+        draw.point((tx + 3, ty + 15), fill=t_claw)
+        draw.point((tx + 6, ty + 15), fill=t_claw)
+        draw.point((tx + 8, ty + 15), fill=t_claw)
+        # leaf on head (wobbles per frame)
+        lx = tx + 4 + (f % 2)
+        draw.point((lx, ty - 1), fill=(50, 160, 50))
+        draw.point((lx + 1, ty - 1), fill=(60, 180, 60))
+        draw.point((lx + 2, ty - 1), fill=(50, 160, 50))
+        draw.point((lx + 1, ty - 2), fill=(60, 180, 60))
+        draw.point((lx + 1, ty - 3), fill=(40, 130, 40))
+
         frames.append(img)
     return frames
 
@@ -283,12 +372,78 @@ def _scene_cloudy(num_frames: int = 4) -> List[Image.Image]:
             px = 30 + (y - 43)
             draw.line([(px, y), (px + pw, y)], fill=(150, 140, 110))
 
+        # Catbus running along the hilltop — detailed pixel art (~20x10)
+        cat_body = (220, 170, 60)
+        cat_lt = (240, 195, 85)
+        cat_dk = (170, 120, 35)
+        cat_fur = (200, 155, 50)
+        eye_glow = (255, 240, 100)
+        eye_pupil = (30, 30, 30)
+        teeth_c = (255, 255, 250)
+        grin_c = (240, 230, 220)
+        window_c = (255, 220, 130)
+        cx = (50 - f * 6) % 44 + 2
+        cy = 30
+        # pointed ears with inner color
+        draw.point((cx, cy - 2), fill=cat_body)
+        draw.point((cx + 4, cy - 2), fill=cat_body)
+        draw.point((cx, cy - 1), fill=cat_body)
+        draw.point((cx + 1, cy - 1), fill=cat_lt)
+        draw.point((cx + 3, cy - 1), fill=cat_lt)
+        draw.point((cx + 4, cy - 1), fill=cat_body)
+        # head (5 wide)
+        for dx in range(5):
+            draw.point((cx + dx, cy), fill=cat_body)
+            draw.point((cx + dx, cy + 1), fill=cat_body)
+        # large glowing eyes with pupils
+        draw.point((cx + 1, cy), fill=eye_glow)
+        draw.point((cx + 3, cy), fill=eye_glow)
+        draw.point((cx + 1, cy + 1), fill=eye_pupil)
+        draw.point((cx + 3, cy + 1), fill=eye_pupil)
+        # nose between eyes
+        draw.point((cx + 2, cy + 1), fill=cat_dk)
+        # wide grin with teeth
+        for dx in range(5):
+            draw.point((cx + dx, cy + 2), fill=cat_body)
+        draw.point((cx + 1, cy + 2), fill=grin_c)
+        draw.point((cx + 2, cy + 2), fill=teeth_c)
+        draw.point((cx + 3, cy + 2), fill=grin_c)
+        # whiskers
+        draw.point((cx - 1, cy + 1), fill=cat_lt)
+        draw.point((cx + 5, cy + 1), fill=cat_lt)
+        # long bus body (columns 5-17)
+        for dx in range(5, 18):
+            draw.point((cx + dx, cy - 1), fill=cat_lt)
+            draw.point((cx + dx, cy), fill=cat_body)
+            draw.point((cx + dx, cy + 1), fill=cat_body)
+            draw.point((cx + dx, cy + 2), fill=cat_fur)
+        # dark stripes on body
+        for sx in [7, 10, 13, 16]:
+            draw.point((cx + sx, cy), fill=cat_dk)
+            draw.point((cx + sx, cy + 1), fill=cat_dk)
+        # glowing windows between stripes
+        for wx in [8, 11, 14]:
+            draw.point((cx + wx, cy), fill=window_c)
+            draw.point((cx + wx + 1, cy), fill=window_c)
+        # fluffy tail curling up
+        draw.point((cx + 18, cy), fill=cat_body)
+        draw.point((cx + 18, cy - 1), fill=cat_body)
+        draw.point((cx + 19, cy - 1), fill=cat_lt)
+        draw.point((cx + 19, cy - 2), fill=cat_lt)
+        # six legs (animated run cycle)
+        leg_positions = [5, 8, 10, 13, 15, 17]
+        for i, lx in enumerate(leg_positions):
+            off = (f + i) % 2
+            draw.point((cx + lx, cy + 3), fill=cat_dk)
+            draw.point((cx + lx, cy + 4 - off), fill=cat_dk)
+            draw.point((cx + lx, cy + 5 - off), fill=cat_fur)
+
         frames.append(img)
     return frames
 
 
 # ---------------------------------------------------------------------------
-# Scene: RAIN — Forest with rain, puddles, red umbrella
+# Scene: RAIN — Forest with rain, puddles, Totoro at bus stop
 # ---------------------------------------------------------------------------
 
 def _scene_rain(num_frames: int = 4) -> List[Image.Image]:
@@ -336,15 +491,136 @@ def _scene_rain(num_frames: int = 4) -> List[Image.Image]:
                 draw.arc([px - 3, py - 1, px + 3, py + 1], 0, 180,
                          fill=(150, 180, 220))
 
-        # red umbrella
-        draw.arc([28, 30, 38, 38], 180, 0, fill=umbrella_c)
-        draw.ellipse([28, 31, 38, 35], fill=umbrella_c)
-        draw.line([(33, 35), (33, 42)], fill=(80, 60, 50))
-        # small figure under umbrella
-        draw.point((33, 42), fill=(60, 50, 40))
-        draw.point((33, 43), fill=(60, 50, 40))
-        draw.point((32, 43), fill=(60, 50, 40))
-        draw.point((34, 43), fill=(60, 50, 40))
+        # Bus stop sign — detailed
+        pole_c = (120, 100, 80)
+        sign_c = (180, 160, 60)
+        sign_txt = (80, 70, 40)
+        draw.line([(22, 28), (22, 46)], fill=pole_c)
+        draw.line([(23, 28), (23, 46)], fill=(100, 80, 60))
+        draw.rectangle([19, 25, 26, 29], fill=sign_c)
+        draw.point((21, 27), fill=sign_txt)
+        draw.point((23, 27), fill=sign_txt)
+        draw.point((25, 27), fill=sign_txt)
+
+        # Totoro at the bus stop — detailed pixel art (~12x18)
+        t_body = (120, 130, 135)
+        t_light = (145, 155, 160)
+        t_dark = (85, 95, 100)
+        t_belly = (195, 200, 185)
+        t_chev = (70, 80, 85)
+        t_eye_w = (200, 215, 230)
+        t_pupil = (20, 20, 25)
+        t_nose = (70, 75, 80)
+        handle_c = (80, 60, 50)
+        tx, ty = 30, 24
+        # umbrella — rounded canopy with highlight
+        draw.ellipse([tx - 1, ty - 6, tx + 12, ty + 1], fill=umbrella_c)
+        draw.ellipse([tx + 1, ty - 5, tx + 10, ty - 2], fill=(220, 80, 70))
+        # umbrella handle
+        draw.line([(tx + 5, ty + 1), (tx + 5, ty + 3)], fill=handle_c)
+        draw.point((tx + 4, ty + 3), fill=handle_c)
+        # pointed ears
+        draw.point((tx, ty + 2), fill=t_body)
+        draw.point((tx + 1, ty + 2), fill=t_light)
+        draw.point((tx + 9, ty + 2), fill=t_light)
+        draw.point((tx + 10, ty + 2), fill=t_body)
+        # head
+        for dx in range(1, 10):
+            draw.point((tx + dx, ty + 3), fill=t_body)
+        for dx in range(0, 11):
+            draw.point((tx + dx, ty + 4), fill=t_body)
+        for dx in range(0, 11):
+            draw.point((tx + dx, ty + 5), fill=t_body)
+        # eyes with pupils and highlights
+        draw.point((tx + 2, ty + 4), fill=t_eye_w)
+        draw.point((tx + 3, ty + 4), fill=t_eye_w)
+        draw.point((tx + 3, ty + 5), fill=t_pupil)
+        draw.point((tx + 7, ty + 4), fill=t_eye_w)
+        draw.point((tx + 8, ty + 4), fill=t_eye_w)
+        draw.point((tx + 7, ty + 5), fill=t_pupil)
+        draw.point((tx + 2, ty + 3), fill=(255, 255, 255))
+        draw.point((tx + 8, ty + 3), fill=(255, 255, 255))
+        # nose
+        draw.point((tx + 5, ty + 5), fill=t_nose)
+        # mouth
+        for dx in range(1, 10):
+            draw.point((tx + dx, ty + 6), fill=t_body)
+        draw.point((tx + 3, ty + 6), fill=t_dark)
+        draw.point((tx + 7, ty + 6), fill=t_dark)
+        # body with shading
+        for dy in range(7, 15):
+            w = 11 if dy < 12 else 10 if dy < 14 else 8
+            ox = 0 if dy < 14 else 1
+            for dx in range(ox, w):
+                draw.point((tx + dx, ty + dy), fill=t_body)
+            draw.point((tx + ox, ty + dy), fill=t_dark)
+            if dy < 14:
+                draw.point((tx + w - 1, ty + dy), fill=t_dark)
+        # shoulder highlight
+        draw.point((tx + 1, ty + 7), fill=t_light)
+        draw.point((tx + 2, ty + 7), fill=t_light)
+        # arm holding umbrella (raised right arm)
+        draw.point((tx + 9, ty + 7), fill=t_body)
+        draw.point((tx + 10, ty + 6), fill=t_body)
+        draw.point((tx + 10, ty + 5), fill=t_body)
+        # belly patch
+        for dy in range(8, 13):
+            for dx in range(2, 9):
+                draw.point((tx + dx, ty + dy), fill=t_belly)
+        # chevrons
+        draw.point((tx + 5, ty + 8), fill=t_chev)
+        draw.point((tx + 4, ty + 9), fill=t_chev)
+        draw.point((tx + 6, ty + 9), fill=t_chev)
+        draw.point((tx + 5, ty + 10), fill=t_chev)
+        draw.point((tx + 4, ty + 11), fill=t_chev)
+        draw.point((tx + 6, ty + 11), fill=t_chev)
+        draw.point((tx + 5, ty + 12), fill=t_chev)
+        # feet with claws
+        for dx in [1, 2, 3]:
+            draw.point((tx + dx, ty + 15), fill=t_body)
+        for dx in [6, 7, 8]:
+            draw.point((tx + dx, ty + 15), fill=t_body)
+        draw.point((tx + 1, ty + 16), fill=t_dark)
+        draw.point((tx + 3, ty + 16), fill=t_dark)
+        draw.point((tx + 6, ty + 16), fill=t_dark)
+        draw.point((tx + 8, ty + 16), fill=t_dark)
+
+        # Satsuki next to Totoro — detailed (~6x10)
+        sx, sy = tx - 7, ty + 8
+        hair_c = (60, 45, 35)
+        skin_c = (220, 190, 160)
+        coat_c = (220, 180, 80)
+        coat_dk = (190, 150, 60)
+        boot_c = (100, 70, 50)
+        # hair
+        for dx in range(1, 5):
+            draw.point((sx + dx, sy), fill=hair_c)
+        draw.point((sx + 1, sy + 1), fill=hair_c)
+        draw.point((sx + 4, sy + 1), fill=hair_c)
+        # face
+        draw.point((sx + 2, sy + 1), fill=skin_c)
+        draw.point((sx + 3, sy + 1), fill=skin_c)
+        draw.point((sx + 2, sy + 2), fill=skin_c)
+        draw.point((sx + 3, sy + 2), fill=skin_c)
+        # tiny eyes
+        draw.point((sx + 2, sy + 1), fill=(40, 35, 30))
+        draw.point((sx + 3, sy + 1), fill=(40, 35, 30))
+        # yellow raincoat
+        for dy in range(3, 7):
+            for dx in range(0, 6):
+                draw.point((sx + dx, sy + dy), fill=coat_c)
+        # coat shading on sides
+        for dy in range(3, 7):
+            draw.point((sx, sy + dy), fill=coat_dk)
+            draw.point((sx + 5, sy + dy), fill=coat_dk)
+        # coat buttons
+        draw.point((sx + 3, sy + 4), fill=(180, 140, 50))
+        draw.point((sx + 3, sy + 5), fill=(180, 140, 50))
+        # boots
+        draw.point((sx + 1, sy + 7), fill=boot_c)
+        draw.point((sx + 2, sy + 7), fill=boot_c)
+        draw.point((sx + 3, sy + 7), fill=boot_c)
+        draw.point((sx + 4, sy + 7), fill=boot_c)
 
         frames.append(img)
     return frames
@@ -419,12 +695,110 @@ def _scene_snow(num_frames: int = 4) -> List[Image.Image]:
         for sy in range(8, 14):
             draw.point((smoke_x + (sy % 2), sy), fill=(180, 185, 195))
 
+        # Calcifer on firewood — detailed pixel art (~10x14)
+        cx, cy = 48, 34
+        # firewood logs
+        log_dk = (90, 55, 30)
+        log_lt = (120, 80, 45)
+        log_hi = (140, 100, 60)
+        bark = (70, 40, 20)
+        ash_c = (60, 55, 50)
+        ember = (180, 60, 20)
+        # left log (angled)
+        for dx in range(-4, 2):
+            draw.point((cx + dx, cy + 8), fill=log_dk)
+            draw.point((cx + dx, cy + 9), fill=log_lt)
+            draw.point((cx + dx, cy + 10), fill=log_dk)
+        draw.point((cx - 4, cy + 9), fill=bark)
+        draw.point((cx + 1, cy + 9), fill=bark)
+        # right log (angled other way)
+        for dx in range(-1, 5):
+            draw.point((cx + dx, cy + 9), fill=log_lt)
+            draw.point((cx + dx, cy + 10), fill=log_dk)
+            draw.point((cx + dx, cy + 11), fill=log_dk)
+        draw.point((cx + 4, cy + 10), fill=bark)
+        draw.point((cx - 1, cy + 10), fill=bark)
+        # cross piece
+        draw.point((cx, cy + 9), fill=log_hi)
+        draw.point((cx + 1, cy + 9), fill=log_hi)
+        # glowing embers under logs
+        draw.point((cx - 2, cy + 11), fill=ember)
+        draw.point((cx + 1, cy + 11), fill=ember)
+        draw.point((cx + 3, cy + 11), fill=(200, 80, 30))
+        # ash
+        draw.point((cx - 3, cy + 11), fill=ash_c)
+        draw.point((cx + 4, cy + 12), fill=ash_c)
+
+        # Calcifer — flame body with face (flickers per frame)
+        flame_core = (255, 200, 50)
+        flame_mid = (255, 140, 30)
+        flame_outer = (230, 80, 20)
+        flame_tip = (255, 240, 100)
+        flame_dk = (200, 60, 15)
+        eye_w = (240, 245, 250)
+        eye_pupil = (20, 20, 25)
+        mouth = (200, 50, 15)
+        flicker = f % 2
+        # flame base (wide, sitting on logs)
+        for dx in range(-3, 4):
+            draw.point((cx + dx, cy + 7), fill=flame_outer)
+        for dx in range(-3, 4):
+            draw.point((cx + dx, cy + 6), fill=flame_mid)
+        for dx in range(-2, 3):
+            draw.point((cx + dx, cy + 5), fill=flame_mid)
+        # warm core
+        for dx in range(-2, 3):
+            draw.point((cx + dx, cy + 6), fill=flame_core)
+            draw.point((cx + dx, cy + 5), fill=flame_core)
+        for dx in range(-1, 2):
+            draw.point((cx + dx, cy + 4), fill=flame_core)
+        # upper flame (narrows, animated flicker)
+        for dx in range(-2, 3):
+            draw.point((cx + dx, cy + 3), fill=flame_mid)
+        for dx in range(-1, 2):
+            draw.point((cx + dx, cy + 2), fill=flame_mid)
+        draw.point((cx + flicker, cy + 1), fill=flame_outer)
+        draw.point((cx - 1 + flicker, cy + 1), fill=flame_outer)
+        # flame tip (dances)
+        draw.point((cx + flicker, cy), fill=flame_tip)
+        draw.point((cx - 1 + flicker, cy - 1), fill=flame_tip)
+        # side licks of flame
+        draw.point((cx - 3, cy + 5), fill=flame_outer)
+        draw.point((cx + 3, cy + 5), fill=flame_outer)
+        draw.point((cx - 3 - flicker, cy + 4), fill=flame_dk)
+        draw.point((cx + 3 + flicker, cy + 4), fill=flame_dk)
+        # big round eyes (Calcifer's signature)
+        draw.point((cx - 1, cy + 4), fill=eye_w)
+        draw.point((cx - 2, cy + 4), fill=eye_w)
+        draw.point((cx - 1, cy + 5), fill=eye_w)
+        draw.point((cx - 2, cy + 5), fill=eye_pupil)
+        draw.point((cx + 1, cy + 4), fill=eye_w)
+        draw.point((cx + 2, cy + 4), fill=eye_w)
+        draw.point((cx + 1, cy + 5), fill=eye_w)
+        draw.point((cx + 2, cy + 5), fill=eye_pupil)
+        # highlight in eyes
+        draw.point((cx - 1, cy + 4), fill=(255, 255, 255))
+        draw.point((cx + 1, cy + 4), fill=(255, 255, 255))
+        # wide grin
+        draw.point((cx - 2, cy + 6), fill=mouth)
+        draw.point((cx - 1, cy + 7), fill=mouth)
+        draw.point((cx, cy + 7), fill=mouth)
+        draw.point((cx + 1, cy + 7), fill=mouth)
+        draw.point((cx + 2, cy + 6), fill=mouth)
+        # warm glow on nearby snow
+        for gx in range(-5, 6):
+            gy = cy + 12
+            if 0 <= cx + gx < 64 and gy < 52:
+                base = img.getpixel((cx + gx, gy))
+                draw.point((cx + gx, gy),
+                           fill=_blend(base, (255, 180, 80), 0.15))
+
         frames.append(img)
     return frames
 
 
 # ---------------------------------------------------------------------------
-# Scene: THUNDERSTORM — Dark sky, lightning, heavy rain
+# Scene: THUNDERSTORM — Dark sky, lightning, Kiki flying
 # ---------------------------------------------------------------------------
 
 def _scene_thunderstorm(num_frames: int = 4) -> List[Image.Image]:
@@ -474,6 +848,109 @@ def _scene_thunderstorm(num_frames: int = 4) -> List[Image.Image]:
             hy = 38 + int(4 * ((x - 32) / 45) ** 2)
             for y in range(hy, 42):
                 draw.point((x, y), fill=(35, 50, 35))
+
+        # Kiki flying on her broom with Jiji — detailed pixel art (~22x12)
+        kx = (44 - f * 7) % 46 + 8
+        ky = 22 + (f % 3) - 1
+        dress = (90, 40, 70)
+        dress_dk = (65, 25, 50)
+        skin = (220, 185, 160)
+        hair = (50, 35, 30)
+        hair_hi = (75, 55, 45)
+        bow = (200, 60, 80)
+        bow_dk = (160, 40, 60)
+        broom_c = (140, 100, 50)
+        broom_dk = (110, 75, 35)
+        bristle_c = (180, 140, 60)
+        bristle_lt = (200, 170, 90)
+        jj = (25, 20, 30)
+        jj_hi = (45, 40, 55)
+        jj_eye = (220, 200, 80)
+        # broom stick (long, with wood grain)
+        draw.line([(kx - 7, ky + 5), (kx + 12, ky + 5)], fill=broom_c)
+        draw.line([(kx - 7, ky + 6), (kx + 12, ky + 6)], fill=broom_dk)
+        # broom bristles (fan shaped)
+        for dy in range(-2, 3):
+            draw.point((kx + 13, ky + 5 + dy), fill=bristle_c)
+            draw.point((kx + 14, ky + 5 + dy), fill=bristle_c)
+        draw.point((kx + 15, ky + 4), fill=bristle_lt)
+        draw.point((kx + 15, ky + 6), fill=bristle_lt)
+        draw.point((kx + 15, ky + 5), fill=bristle_c)
+        # Kiki — flowing hair
+        draw.point((kx - 1, ky - 3), fill=hair)
+        draw.point((kx, ky - 3), fill=hair)
+        draw.point((kx + 1, ky - 3), fill=hair)
+        draw.point((kx - 2, ky - 2), fill=hair)
+        draw.point((kx - 1, ky - 2), fill=hair)
+        draw.point((kx, ky - 2), fill=hair)
+        draw.point((kx + 1, ky - 2), fill=hair_hi)
+        draw.point((kx - 3, ky - 1), fill=hair)
+        # face
+        draw.point((kx - 1, ky - 1), fill=skin)
+        draw.point((kx, ky - 1), fill=skin)
+        # eyes
+        draw.point((kx - 1, ky - 1), fill=(40, 35, 30))
+        draw.point((kx, ky - 1), fill=skin)
+        draw.point((kx + 1, ky - 1), fill=skin)
+        # big red bow
+        draw.point((kx + 2, ky - 3), fill=bow)
+        draw.point((kx + 3, ky - 3), fill=bow)
+        draw.point((kx + 2, ky - 2), fill=bow_dk)
+        draw.point((kx + 3, ky - 2), fill=bow)
+        draw.point((kx + 4, ky - 3), fill=bow)
+        # dress body
+        for dx in range(-2, 3):
+            draw.point((kx + dx, ky), fill=dress)
+            draw.point((kx + dx, ky + 1), fill=dress)
+        draw.point((kx - 2, ky + 2), fill=dress)
+        draw.point((kx - 1, ky + 2), fill=dress)
+        draw.point((kx, ky + 2), fill=dress)
+        draw.point((kx + 1, ky + 2), fill=dress)
+        draw.point((kx + 2, ky + 2), fill=dress)
+        # dress shading
+        draw.point((kx - 2, ky + 1), fill=dress_dk)
+        draw.point((kx + 2, ky + 1), fill=dress_dk)
+        # dress fluttering in wind
+        draw.point((kx + 3, ky + 2), fill=dress)
+        draw.point((kx + 3, ky + 3), fill=dress_dk)
+        # arms reaching forward on broom
+        draw.point((kx + 2, ky + 3), fill=skin)
+        draw.point((kx + 3, ky + 4), fill=skin)
+        # legs dangling
+        draw.point((kx - 1, ky + 3), fill=skin)
+        draw.point((kx - 1, ky + 4), fill=skin)
+        draw.point((kx + 1, ky + 3), fill=skin)
+        draw.point((kx + 1, ky + 4), fill=skin)
+        # shoes
+        draw.point((kx - 1, ky + 5), fill=(60, 30, 25))
+        draw.point((kx + 1, ky + 5), fill=(60, 30, 25))
+        # Jiji (black cat) sitting behind Kiki — detailed
+        jx = kx - 5
+        # head
+        draw.point((jx, ky + 1), fill=jj)
+        draw.point((jx + 1, ky + 1), fill=jj)
+        draw.point((jx + 2, ky + 1), fill=jj)
+        draw.point((jx, ky + 2), fill=jj)
+        draw.point((jx + 1, ky + 2), fill=jj)
+        draw.point((jx + 2, ky + 2), fill=jj)
+        # pointed ears
+        draw.point((jx, ky), fill=jj)
+        draw.point((jx + 2, ky), fill=jj)
+        # golden eyes
+        draw.point((jx, ky + 2), fill=jj_eye)
+        draw.point((jx + 2, ky + 2), fill=jj_eye)
+        # body (arched back)
+        draw.point((jx, ky + 3), fill=jj)
+        draw.point((jx + 1, ky + 3), fill=jj_hi)
+        draw.point((jx + 2, ky + 3), fill=jj)
+        draw.point((jx + 1, ky + 4), fill=jj)
+        # paws on broom
+        draw.point((jx, ky + 4), fill=jj)
+        draw.point((jx + 2, ky + 4), fill=jj)
+        # curled tail
+        draw.point((jx - 1, ky + 3), fill=jj)
+        draw.point((jx - 2, ky + 2), fill=jj)
+        draw.point((jx - 2, ky + 1), fill=jj)
 
         frames.append(img)
     return frames
@@ -525,6 +1002,96 @@ def _scene_fog(num_frames: int = 4) -> List[Image.Image]:
 
         # ground
         _gradient(draw, ground_c, (140, 148, 138), 44, 52)
+
+        # Kodama (tree spirits) — detailed pixel art with head-tilt
+        k_head = (230, 235, 225)
+        k_head_hi = (245, 248, 240)
+        k_head_sh = (200, 205, 195)
+        k_hole = (60, 70, 60)
+        k_body = (200, 210, 200)
+        k_body_dk = (170, 180, 170)
+        k_glow = (210, 230, 210)
+        tilt_seq = [0, -1, 0, 1]
+        spirits = [(12, 34), (24, 32), (40, 35), (53, 33)]
+        for i, (kx, ky) in enumerate(spirits):
+            tilt = tilt_seq[(f + i) % 4]
+            hx = kx + tilt
+
+            if tilt == 0:
+                # upright — symmetric round head
+                draw.point((hx, ky), fill=k_head_hi)
+                for dx in range(-1, 2):
+                    draw.point((hx + dx, ky + 1), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 2), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 3), fill=k_head)
+                for dx in range(-1, 2):
+                    draw.point((hx + dx, ky + 4), fill=k_head)
+                draw.point((hx - 1, ky + 1), fill=k_head_hi)
+                draw.point((hx + 2, ky + 2), fill=k_head_sh)
+                draw.point((hx + 2, ky + 3), fill=k_head_sh)
+                # face
+                draw.point((hx - 1, ky + 2), fill=k_hole)
+                draw.point((hx + 1, ky + 2), fill=k_hole)
+                draw.point((hx, ky + 3), fill=k_hole)
+            elif tilt == -1:
+                # tilted left — left side droops lower
+                draw.point((hx + 1, ky), fill=k_head_hi)
+                draw.point((hx, ky + 1), fill=k_head)
+                draw.point((hx + 1, ky + 1), fill=k_head)
+                draw.point((hx + 2, ky + 1), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 2), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 3), fill=k_head)
+                draw.point((hx - 2, ky + 4), fill=k_head)
+                draw.point((hx - 1, ky + 4), fill=k_head)
+                draw.point((hx, ky + 4), fill=k_head)
+                draw.point((hx + 1, ky + 4), fill=k_head)
+                draw.point((hx - 2, ky + 5), fill=k_head)
+                draw.point((hx - 1, ky + 5), fill=k_head_sh)
+                draw.point((hx + 2, ky + 2), fill=k_head_sh)
+                # face (shifted slightly with tilt)
+                draw.point((hx - 1, ky + 3), fill=k_hole)
+                draw.point((hx + 1, ky + 2), fill=k_hole)
+                draw.point((hx, ky + 4), fill=k_hole)
+            else:
+                # tilted right — right side droops lower
+                draw.point((hx - 1, ky), fill=k_head_hi)
+                draw.point((hx - 2, ky + 1), fill=k_head)
+                draw.point((hx - 1, ky + 1), fill=k_head)
+                draw.point((hx, ky + 1), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 2), fill=k_head)
+                for dx in range(-2, 3):
+                    draw.point((hx + dx, ky + 3), fill=k_head)
+                draw.point((hx - 1, ky + 4), fill=k_head)
+                draw.point((hx, ky + 4), fill=k_head)
+                draw.point((hx + 1, ky + 4), fill=k_head)
+                draw.point((hx + 2, ky + 4), fill=k_head)
+                draw.point((hx + 1, ky + 5), fill=k_head_sh)
+                draw.point((hx + 2, ky + 5), fill=k_head)
+                draw.point((hx - 2, ky + 2), fill=k_head_sh)
+                # face (shifted slightly with tilt)
+                draw.point((hx - 1, ky + 2), fill=k_hole)
+                draw.point((hx + 1, ky + 3), fill=k_hole)
+                draw.point((hx, ky + 4), fill=k_hole)
+
+            # neck stays centered on body
+            draw.point((kx, ky + 5), fill=k_body)
+            # body (always upright)
+            draw.point((kx - 1, ky + 6), fill=k_body)
+            draw.point((kx, ky + 6), fill=k_body)
+            draw.point((kx + 1, ky + 6), fill=k_body)
+            draw.point((kx - 1, ky + 7), fill=k_body)
+            draw.point((kx, ky + 7), fill=k_body)
+            draw.point((kx + 1, ky + 7), fill=k_body)
+            draw.point((kx, ky + 8), fill=k_body)
+            draw.point((kx + 1, ky + 7), fill=k_body_dk)
+            draw.point((kx - 2, ky + 6), fill=k_body)
+            draw.point((kx + 2, ky + 6), fill=k_body)
+            draw.point((hx, ky - 1), fill=k_glow)
 
         frames.append(img)
     return frames
