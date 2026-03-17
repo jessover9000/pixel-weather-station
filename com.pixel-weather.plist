@@ -16,10 +16,7 @@
     <key>WorkingDirectory</key>
     <string>/Users/jessmatz/Grafana/Cursor projects/pixel-weather-station</string>
 
-    <key>StartInterval</key>
-    <integer>900</integer>
-
-    <key>RunAtLoad</key>
+    <key>KeepAlive</key>
     <true/>
 
     <key>StandardOutPath</key>

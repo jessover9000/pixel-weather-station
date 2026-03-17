@@ -17,5 +17,8 @@ OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 # Hour cutoff for rain probability (18 = 6pm)
 RAIN_CUTOFF_HOUR = 18
 
-# Delay in seconds between BLE pixel writes to avoid packet loss
-BLE_PIXEL_DELAY = 0.02
+# Seconds between animation frames sent to the display
+FRAME_DELAY = 3.0
+
+# Seconds between weather data refreshes
+WEATHER_REFRESH_INTERVAL = 900  # 15 minutes
